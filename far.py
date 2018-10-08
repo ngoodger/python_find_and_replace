@@ -32,11 +32,12 @@ def far_infile(file_pattern="*", path=".", mapping={}):
     """
     filenames = _find(pattern=file_pattern, path=path)
     for filename in filenames:
-        with open(filename, "r") as f:
+        with open(filename, "r", newline="\n") as f:
             file_contents = f.read()
         for k,v in mapping.items():
-            file_contents = file_contents.replace(k, v) 
-        with open(filename, "w") as f:
+            if k in file_contents:
+                file_contents = file_contents.replace(k, v)
+        with open(filename, "w", newline="\n") as f:
             f.write(file_contents)
 
 def far_filename(file_pattern="*", path=".", mapping={}):
@@ -55,9 +56,12 @@ def far_filename(file_pattern="*", path=".", mapping={}):
     for filename in filenames:
         split_filename = filename.split("/")
         temp_filename = split_filename[-1]
+        new_filename = temp_filename
         for k,v in mapping.items():
             if k in temp_filename:
                 new_filename = temp_filename.replace(k, v)
-                split_filename[-1] = new_filename
-                os.rename(filename, "/".join(split_filename))
-
+                # Only replace the first match
+                break
+        if temp_filename != new_filename:
+            split_filename[-1] = new_filename
+        os.rename(filename, "/".join(split_filename))

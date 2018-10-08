@@ -1,6 +1,7 @@
 # Python library for replacing file contents or filenames by dictionary mapping.
 
 # Requirements 
+Python3.6 or above (Requires mapping dictionary to be ordered for deterministic behavior).
 Install requirements
 pip install -r requirements.txt
 
