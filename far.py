@@ -2,6 +2,15 @@ import os, fnmatch
 
 # https://stackoverflow.com/questions/1724693/find-a-file-in-python
 def _find(pattern, path):
+    """
+    Function that finds files based on pattern in path.
+
+    Args:
+    pattern: string
+        regex pattern defining files to be found.
+    path: string
+        path on which to search for files.
+    """
     result = []
     for root, dirs, files in os.walk(path):
         for name in files:
@@ -10,21 +19,45 @@ def _find(pattern, path):
     return result
 
 def far_infile(file_pattern="*", path=".", mapping={}):
+    """
+    Function that replaces text in files based on mapping. 
+
+    Args:
+    file_pattern: string
+        regex pattern defining files to be found.
+    file_path: string
+        path on which to search for files.
+    mapping: dict{string: string} 
+        mapping for in file replacement.
+    """
     filenames = _find(pattern=file_pattern, path=path)
-    for filename in files:
+    for filename in filenames:
         with open(filename, "r") as f:
             file_contents = f.read()
         for k,v in mapping.items():
             file_contents = file_contents.replace(k, v) 
-        with open(file, "w") as f:
+        with open(filename, "w") as f:
             f.write(file_contents)
 
-def far_filename(file_pattern="*", path=".", mapping={})
+def far_filename(file_pattern="*", path=".", mapping={}):
+    """
+    Function that replaces filenames based on mapping. 
+
+    Args:
+    file_pattern: string
+        regex pattern defining files to be found.
+    file_path: string
+        path on which to search for files.
+    mapping: dict{string: string} 
+        mapping for filename replacement.
+    """
     filenames = _find(pattern=file_pattern, path=path)
     for filename in filenames:
+        split_filename = filename.split("/")
+        temp_filename = split_filename[-1]
         for k,v in mapping.items():
-            if k in filename:
-                temp_filename = filename
-                temp_filename.replace(k, v)
-                os.rename(filename, temp_filename)
+            if k in temp_filename:
+                new_filename = temp_filename.replace(k, v)
+                split_filename[-1] = new_filename
+                os.rename(filename, "/".join(split_filename))
 
